@@ -83,11 +83,12 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
 
         // Ylin taso
         mainBox.setBorder(new EmptyBorder(40, 80, 40, 80));
-        mainBox.setPreferredSize(new Dimension(1200, 900));
+        mainBox.setPreferredSize(new Dimension(1600, 900));
 
         // Yläpaneeli
         Box upperPanel = Box.createHorizontalBox();
-        upperPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
+        upperPanel.setPreferredSize(new Dimension(800, 50));
+        upperPanel.setMaximumSize(new Dimension(2000, 50));
 
         // Kanavavalikko
         Box channelsArea = Box.createVerticalBox();
@@ -97,6 +98,7 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         upperPanel.add(channelsArea);
 
         // Ikonit
+        // TODO nämä pitää asetella kivemmin
         Box iconArea = Box.createHorizontalBox();
         URL imgUrl = getClass().getResource("resources/icons/question-50.png");
         ImageIcon helpImageIcon = new ImageIcon(imgUrl);
@@ -115,22 +117,28 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         upperPanel.add(iconArea);
 
         mainBox.add(upperPanel);
+        mainBox.add(Box.createVerticalStrut(20));
 
         // Chat-paneeli
-        // chatPanel.setPreferredSize(new DimensionUIResource(1040, 760));
+        chatPanel.setPreferredSize(new Dimension(800, 610));
+        chatPanel.setMaximumSize(new Dimension(2000, 2000));
+        chatPanel.setMinimumSize(new Dimension(400, 200));
         chatPanel.setBorder(new RoundedBorder(20));
         chatPanel.add(senderArea);
         chatPanel.add(Box.createHorizontalStrut(40));
         chatPanel.add(messageArea);
         mainBox.add(chatPanel);
+        mainBox.add(Box.createVerticalStrut(20));
 
         // Alapaneeli
         Box lowerPanel = Box.createHorizontalBox();
-        lowerPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
+        lowerPanel.setPreferredSize(new Dimension(1300, 120));
+        lowerPanel.setMinimumSize(new Dimension(400, 120));
+        lowerPanel.setMaximumSize(new Dimension(2000, 120));
         textarea.setFont(defaultFont);
         textarea.setBorder(new RoundedBorder(15));
-        JScrollPane scroller = new JScrollPane(textarea);
-        lowerPanel.add(scroller);
+        // JScrollPane scroller = new JScrollPane(textarea);
+        lowerPanel.add(textarea);
         lowerPanel.add(Box.createHorizontalStrut(40));
         JButton sendButton = new JButton("Lähetä");
         // TODO poista tämä kunhan on testailtu
@@ -141,6 +149,7 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
             }
         });
         lowerPanel.add(sendButton);
+        lowerPanel.add(Box.createHorizontalStrut(40));
         mainBox.add(lowerPanel);
 
         getContentPane().add(mainBox);
