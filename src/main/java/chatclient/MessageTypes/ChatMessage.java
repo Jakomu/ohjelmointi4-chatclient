@@ -1,4 +1,4 @@
-package chatclient.MessageTypes;
+package chatclient.messageTypes;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

@@ -1,6 +1,6 @@
 package chatclient;
 
-import chatclient.MessageTypes.Message;
+import chatclient.messageTypes.Message;
 
 public interface ChatClientDataProvider {
     String getServer();

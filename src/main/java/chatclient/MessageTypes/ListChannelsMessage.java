@@ -1,4 +1,4 @@
-package chatclient.MessageTypes;
+package chatclient.messageTypes;
 
 import java.util.ArrayList;
 import java.util.List;

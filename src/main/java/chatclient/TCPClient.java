@@ -10,18 +10,11 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import chatclient.MessageTypes.ChangeTopicMessage;
-import chatclient.MessageTypes.ChatMessage;
-import chatclient.MessageTypes.ErrorMessage;
-import chatclient.MessageTypes.JoinMessage;
-import chatclient.MessageTypes.ListChannelsMessage;
-import chatclient.MessageTypes.Message;
-import chatclient.MessageTypes.MessageFactory;
+import chatclient.messageTypes.*;
 
 public class TCPClient implements Runnable {
     private ChatClientDataProvider dataProvider = null;
@@ -37,26 +30,6 @@ public class TCPClient implements Runnable {
 
     public boolean isConnected() {
         return running;
-    }
-
-    // TODO tämä pitää muokata niin että tottelee uita eikä @-merkkiä yms.
-    public synchronized void postChatMessage(String message) {
-        String userName = dataProvider.getNick();
-        String recipientNick = null;
-        String actualMessage = message;
-        if (message.startsWith("@")) {
-            int firstSpace = message.indexOf(' ', 0);
-            if (firstSpace > 0 && firstSpace < message.length()) {
-                recipientNick = message.substring(1, firstSpace);
-                actualMessage = message.substring(firstSpace + 1);
-            }
-        }
-        ChatMessage msg = new ChatMessage(LocalDateTime.now(), userName, actualMessage);
-        if (null != recipientNick) {
-            msg.setRecipient(recipientNick);
-        }
-        String jsonObjectString = msg.toJSON();
-        write(jsonObjectString);
     }
 
     public synchronized void write(String message) {

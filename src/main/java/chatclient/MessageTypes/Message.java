@@ -1,4 +1,4 @@
-package chatclient.MessageTypes;
+package chatclient.messageTypes;
 
 public abstract class Message {
 

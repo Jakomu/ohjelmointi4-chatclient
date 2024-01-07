@@ -10,9 +10,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,7 +26,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuListener;
 
-import chatclient.MessageTypes.*;
+import chatclient.messageTypes.*;
+import chatclient.modals.*;
 
 import static chatclient.resources.constants.*;
 
@@ -37,10 +40,12 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
     private String nick = "Jakomu";
 
     private String[] channels = new String[0];
-    private String currentChannel = "main";
+    private String currentChannel = "main ";
     private Boolean channelsUpdating = false;
     private Boolean channelMenuOpen = false;
     private String currentTopic = "";
+
+    private JFrame root = new JFrame();
     // TODO siirrä mainBox tästä pois, jos sitä ei tarviikkaan päivitellä
     private Box mainBox = Box.createVerticalBox();
     JComboBox<String> dropdown;
@@ -51,17 +56,7 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
 
     public ChatClient() {
         super();
-        // TODO pitäiskö tämä siirtää tästä johonkin?
         tcpClientRunner();
-        // Hanki alkutiedot
-        // TODO keksi parempi tapa
-        // Voisko tehä vaikka niin, että tuolta funktiosta palautetaan true ja sitten
-        // tehään while = false -> pyöritä tyhjää
-        try {
-            TimeUnit.SECONDS.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         // Ylin taso
         mainBox.setBorder(new EmptyBorder(40, 80, 40, 80));
@@ -75,11 +70,16 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         // Kanavavalikko
         Box channelsArea = Box.createVerticalBox();
         dropdown = new JComboBox<String>();
+
         dropdown.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED && !channelsUpdating) {
-                    // TODO jos new channel, niin kysy uuden kanavan nimi
-                    changeChannel(trimChannelName(e.getItem().toString()));
+                    if (e.getItem().toString() == "New channel") {
+                        NewChannelModal newChannelModal = new NewChannelModal(root, "New channel", ChatClient.this);
+                        newChannelModal.setVisible(true);
+                    } else {
+                        changeChannel(trimChannelName(e.getItem().toString()));
+                    }
                 }
             }
 
@@ -103,13 +103,26 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
 
         // Ikonit
         Box iconArea = Box.createHorizontalBox();
-        URL imgUrl = getClass().getResource("resources/icons/question-50.png");
+        iconArea.add(Box.createHorizontalStrut(15));
+        URL imgUrl = getClass().getResource("resources/icons/question-30.png");
         ImageIcon helpImageIcon = new ImageIcon(imgUrl);
         JLabel helpIcon = new JLabel(helpImageIcon);
+        helpIcon.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("Help clicked");
+                sendPrivateMessage("HAAAIII!", "Jakomu");
+            }
+        });
         iconArea.add(helpIcon);
-        imgUrl = getClass().getResource("resources/icons/settings-50.png");
+        imgUrl = getClass().getResource("resources/icons/settings-30.png");
         ImageIcon settingsImageIcon = new ImageIcon(imgUrl);
         JLabel settingsIcon = new JLabel(settingsImageIcon);
+        settingsIcon.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                SettingsModal settingsModal = new SettingsModal(root, "Settings", ChatClient.this);
+                settingsModal.setVisible(true);
+            }
+        });
         iconArea.add(settingsIcon);
         upperPanel.add(iconArea);
 
@@ -162,10 +175,10 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         lowerPanel.add(Box.createHorizontalStrut(40));
         mainBox.add(lowerPanel);
 
-        getContentPane().add(mainBox);
-        pack();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
+        root.add(mainBox);
+        root.pack();
+        root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        root.setVisible(true);
 
         channelChecker();
         System.out.println("Nyt pitäis olla GUI pystyssä!");
@@ -184,15 +197,17 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         new Thread(tcpClient).start();
     }
 
+    // Päivitä kanavat 10 sekunnin välein
     public void channelChecker() {
         new Thread(new Runnable() {
             public void run() {
+                tcpClient.listChannels();
                 while (true) {
                     if (!channelMenuOpen) {
                         tcpClient.listChannels();
                     }
                     try {
-                        TimeUnit.SECONDS.sleep(5);
+                        TimeUnit.SECONDS.sleep(10);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -213,6 +228,22 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         return nick;
     }
 
+    public void setCurrentTopic(String topic) {
+        this.currentTopic = topic;
+    }
+
+    public String getCurrentTopic() {
+        return currentTopic;
+    }
+
+    public void setCurrentChannel(String channel) {
+        this.currentChannel = channel;
+    }
+
+    public String getCurrentChannel() {
+        return currentChannel;
+    }
+
     // TODO tälle toiminto nappiin
     public void setNick(String newNick) {
         // TODO pitää varmaan ilmottaa serverille?
@@ -226,11 +257,16 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
                 if (message instanceof ChatMessage) {
                     ChatMessage chatMessage = (ChatMessage) message;
                     System.out.println(chatMessage.getMessage());
-                    messagePanel.addMessage(chatMessage.getNick() + ": " + chatMessage.getMessage());
                     if (chatMessage.isDirectMessage()) {
-                        // sender.setForeground(Color.RED);
-                        // TODO pitää lisätä vaikka joku directMessage tuohon messagePanel.addMessageen
-                        // ja sinne määrittely että se on punainen jne.
+                        // TODO väri viestiin?
+                        if (chatMessage.getNick() == getNick()) {
+                            messagePanel.addMessage(chatMessage.getNick() + " (private to "
+                                    + chatMessage.directMessageRecipient() + "): " + chatMessage.getMessage());
+                        } else {
+                            messagePanel.addMessage(chatMessage.getNick() + " (private): " + chatMessage.getMessage());
+                        }
+                    } else {
+                        messagePanel.addMessage(chatMessage.getNick() + ": " + chatMessage.getMessage());
                     }
                 }
                 break;
@@ -245,9 +281,13 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
                 channels = list.toArray(new String[list.size()]);
                 dropdown.removeAllItems();
                 for (String channel : channels) {
-                    dropdown.addItem(channel);
+                    if (channel.startsWith(trimChannelName(getCurrentChannel()))) {
+                        dropdown.addItem(channel + " - " + getCurrentTopic());
+                    } else {
+                        dropdown.addItem(channel);
+                    }
                 }
-                dropdown.setSelectedItem(dropdown.getItemAt(findChannelIndex(currentChannel)));
+                dropdown.setSelectedItem(dropdown.getItemAt(findChannelIndex(getCurrentChannel())));
                 dropdown.revalidate();
                 dropdown.repaint();
                 channelsUpdating = false;
@@ -256,8 +296,8 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
 
             case Message.CHANGE_TOPIC: {
                 ChangeTopicMessage topicMessage = (ChangeTopicMessage) message;
-                // TODO Päivitä aihe siihen paikkaan, mihin se lopulta toteutetaan
-                this.currentTopic = topicMessage.getTopic();
+                // TODO Päivitä aihe siihen paikkaan, mihin se lopulta toteutetaan UI:lle
+                setCurrentTopic(topicMessage.getTopic());
                 messagePanel.addMessage("Server: " + topicMessage.getTopic());
                 break;
             }
@@ -279,7 +319,6 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
 
             default:
                 System.out.println("Received message was unknown");
-                // TODO poista nämä, ovat debugia varten
                 break;
         }
         chatPanel.revalidate();
@@ -298,13 +337,16 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         JoinMessage message = new JoinMessage(channel);
         String jsonString = message.toJSON();
         tcpClient.write(jsonString);
-        currentChannel = channel;
+        setCurrentChannel(channel);
+        tcpClient.listChannels();
     }
 
     public void changeTopic(String topic) {
         ChangeTopicMessage message = new ChangeTopicMessage(topic);
         String jsonString = message.toJSON();
         tcpClient.write(jsonString);
+        setCurrentTopic(topic);
+        tcpClient.listChannels();
     }
 
     public void requestChannelList() {
@@ -318,6 +360,23 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         String jsonString = message.toJSON();
         tcpClient.write(jsonString);
         handleReceived(message);
+    }
+
+    public void sendPrivateMessage(String message, String recipientNick) {
+        ChatMessage privateMessage = new ChatMessage(getNick(), message);
+        if (null != recipientNick) {
+            privateMessage.setRecipient(recipientNick);
+        }
+        String jsonString = privateMessage.toJSON();
+        tcpClient.write(jsonString);
+        handleReceived(privateMessage);
+    }
+
+    public void createChannel(String channel, String topic) {
+        changeChannel(channel);
+        if (topic != null && !topic.equals("")) {
+            changeTopic(topic);
+        }
     }
 
     // Apufunktioita
