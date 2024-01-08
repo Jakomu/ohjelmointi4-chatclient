@@ -90,29 +90,20 @@
           <version>3.0.0</version>
         </plugin>
         <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>3.1.1</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <mainClass>chatclient.ChatClient</mainClass>
-          <!-- <arguments>
-            <argument>argument1</argument>
-          </arguments>
-          <systemProperties>
-            <systemProperty>
-              <key>myproperty</key>
-              <value>myvalue</value>
-            </systemProperty>
-          </systemProperties> -->
-        </configuration>
-      </plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.1.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <mainClass>chatclient.ChatClient</mainClass>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>

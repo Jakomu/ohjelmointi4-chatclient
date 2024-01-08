@@ -13,26 +13,30 @@ public class ChatClient implements ChatClientDataProvider {
     private ChatClientUI chatClientUI;
     private int serverPort = 10000;
     private String currentServer = "localhost";
-    private String nick = "Jakomu";
+    private String nick = "";
 
     private String[] channels = new String[0];
     private String currentChannel = "main ";
     private Boolean channelsUpdating = false;
     private Boolean channelMenuOpen = false;
     private String currentTopic = "";
+    private AudioPlayer player = new AudioPlayer();
 
     public ChatClient() {
         super();
 
         chatClientUI = new ChatClientUI(this);
+        chatClientUI.openNickModal();
         tcpClientRunner();
-        while (!tcpClient.isConnected()) {
+        int limit = 0;
+        while (!tcpClient.isConnected() && limit < 20) {
             try {
-                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             System.out.println("Waiting for connection...");
+            limit++;
         }
         channelChecker();
     }
@@ -108,9 +112,7 @@ public class ChatClient implements ChatClientDataProvider {
         this.channelMenuOpen = value;
     }
 
-    // TODO tälle toiminto nappiin
     public void setNick(String newNick) {
-        // TODO pitää varmaan ilmottaa serverille?
         this.nick = newNick;
     }
 
@@ -132,6 +134,7 @@ public class ChatClient implements ChatClientDataProvider {
                     } else {
                         chatClientUI.addMessage(chatMessage.getNick() + ": " + chatMessage.getMessage());
                     }
+                    player.play();
                 }
                 break;
             }
@@ -159,15 +162,16 @@ public class ChatClient implements ChatClientDataProvider {
 
             case Message.CHANGE_TOPIC: {
                 ChangeTopicMessage topicMessage = (ChangeTopicMessage) message;
-                // TODO Päivitä aihe siihen paikkaan, mihin se lopulta toteutetaan UI:lle
                 setCurrentTopic(topicMessage.getTopic());
                 chatClientUI.addMessage("Server: " + topicMessage.getTopic());
+                player.play();
                 break;
             }
 
             case Message.STATUS_MESSAGE: {
                 StatusMessage statusMessage = (StatusMessage) message;
                 chatClientUI.addMessage("Server: " + statusMessage.getStatus());
+                player.play();
                 break;
             }
 
@@ -177,6 +181,7 @@ public class ChatClient implements ChatClientDataProvider {
                 if (msg.requiresClientShutdown()) {
                     // TODO Sulje koko roska ehkä, tai sitten yhdistä uudelleen...
                 }
+                player.play();
                 break;
             }
 

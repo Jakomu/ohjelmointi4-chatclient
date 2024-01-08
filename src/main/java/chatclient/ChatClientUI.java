@@ -194,4 +194,9 @@ public class ChatClientUI extends JFrame {
     public void selectCurrentChannelToDropdown(int index) {
         dropdown.setSelectedItem(dropdown.getItemAt(index));
     }
+
+    public void openNickModal() {
+        NickModal nickModal = new NickModal(root, "Set nickname", chatClient);
+        nickModal.setVisible(true);
+    }
 }

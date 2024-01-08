@@ -14,6 +14,7 @@ public class constants {
     public static final String TEXTAREA_PLACEHOLDER = "Write your message here...";
     public static final String CHANNEL_NAME_PLACEHOLDER = "Write channel name here";
     public static final String CHANNEL_TOPIC_PLACEHOLDER = "Write channel topic here";
+    public static final String NICKNAME_PLACEHOLDER = "Write your nickname here";
 
     // Measures
     public static final int MY_UNIT = 25;
