@@ -116,6 +116,10 @@ public class ChatClient implements ChatClientDataProvider {
         this.nick = newNick;
     }
 
+    public AudioPlayer getAudioPlayer() {
+        return player;
+    }
+
     public boolean handleReceived(Message message) {
         switch (message.getType()) {
             case Message.CHAT_MESSAGE: {
@@ -134,7 +138,7 @@ public class ChatClient implements ChatClientDataProvider {
                     } else {
                         chatClientUI.addMessage(chatMessage.getNick() + ": " + chatMessage.getMessage());
                     }
-                    player.play();
+                    player.playNotification();
                 }
                 break;
             }
@@ -164,14 +168,14 @@ public class ChatClient implements ChatClientDataProvider {
                 ChangeTopicMessage topicMessage = (ChangeTopicMessage) message;
                 setCurrentTopic(topicMessage.getTopic());
                 chatClientUI.addMessage("Server: " + topicMessage.getTopic());
-                player.play();
+                player.playNotification();
                 break;
             }
 
             case Message.STATUS_MESSAGE: {
                 StatusMessage statusMessage = (StatusMessage) message;
                 chatClientUI.addMessage("Server: " + statusMessage.getStatus());
-                player.play();
+                player.playNotification();
                 break;
             }
 
@@ -181,7 +185,7 @@ public class ChatClient implements ChatClientDataProvider {
                 if (msg.requiresClientShutdown()) {
                     // TODO Sulje koko roska ehkä, tai sitten yhdistä uudelleen...
                 }
-                player.play();
+                player.playNotification();
                 break;
             }
 

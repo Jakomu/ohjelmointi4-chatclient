@@ -19,7 +19,6 @@ import chatclient.ChatClient;
 
 public class SettingsModal extends Modal {
 
-    // TODO tee toiminnallisuudet ja miten saa toimimaan funktiot tänne?
     public SettingsModal(JFrame parent, String title, ChatClient chatClient) {
         super(parent, new Dimension(getMyUnit(25), getMyUnit(21)), title, chatClient);
 
@@ -137,12 +136,37 @@ public class SettingsModal extends Modal {
         soundVolumeSlider.setPreferredSize(new Dimension(getMyUnit(12), getMyUnit(2)));
         soundVolumeSlider.setMaximumSize(new Dimension(getMyUnit(12), getMyUnit(2)));
         soundVolumeSlider.setMinimumSize(new Dimension(getMyUnit(12), getMyUnit(2)));
+        soundVolumeSlider.setMinimum(-60);
+        soundVolumeSlider.setMaximum(6);
+        soundVolumeSlider.setValue((int) (chatClient.getAudioPlayer().getSoundLevel()));
+        soundVolumeSlider.addMouseListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent e) {
+                chatClient.getAudioPlayer().setSoundLevel(soundVolumeSlider.getValue());
+                chatClient.getAudioPlayer().playNotification();
+            }
+        });
+        if (chatClient.getAudioPlayer().getMute()) {
+            soundVolumeSlider.setEnabled(false);
+        } else {
+            soundVolumeSlider.setEnabled(true);
+        }
         soundVolumeBox.add(soundVolumeSlider);
         soundVolumeBox.add(Box.createVerticalStrut(getMyUnit(1)));
-        JButton muteButton = new JButton("Mute");
+        URL muteImgUrl = getClass().getResource("../resources/icons/mute-30.png");
+        ImageIcon muteImageIcon = new ImageIcon(muteImgUrl);
+        JButton muteButton = new JButton(muteImageIcon);
         muteButton.setPreferredSize(new Dimension(getMyUnit(2), getMyUnit(2)));
         muteButton.setMaximumSize(new Dimension(getMyUnit(2), getMyUnit(2)));
         muteButton.setMinimumSize(new Dimension(getMyUnit(2), getMyUnit(2)));
+        muteButton.addActionListener(e -> {
+            if (chatClient.getAudioPlayer().getMute()) {
+                chatClient.getAudioPlayer().setMute(false);
+                soundVolumeSlider.setEnabled(true);
+            } else {
+                chatClient.getAudioPlayer().setMute(true);
+                soundVolumeSlider.setEnabled(false);
+            }
+        });
         soundVolumeBox.add(muteButton);
         soundBox.add(soundVolumeBox);
         settingsInputBox.add(soundBox);
