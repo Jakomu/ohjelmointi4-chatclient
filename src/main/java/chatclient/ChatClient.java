@@ -1,40 +1,16 @@
 package chatclient;
 
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.PopupMenuListener;
-
 import chatclient.messageTypes.*;
-import chatclient.modals.*;
 
-import static chatclient.resources.constants.*;
-
-public class ChatClient extends JFrame implements ChatClientDataProvider {
+// TODO tarviiko JFramea tässä enää?
+public class ChatClient implements ChatClientDataProvider {
 
     // TODO kato todo-lista
     private static TCPClient tcpClient;
+    private ChatClientUI chatClientUI;
     private int serverPort = 10000;
     private String currentServer = "localhost";
     private String nick = "Jakomu";
@@ -45,143 +21,20 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
     private Boolean channelMenuOpen = false;
     private String currentTopic = "";
 
-    private JFrame root = new JFrame();
-    // TODO siirrä mainBox tästä pois, jos sitä ei tarviikkaan päivitellä
-    private Box mainBox = Box.createVerticalBox();
-    JComboBox<String> dropdown;
-    private Box chatPanel = Box.createHorizontalBox();
-    private MessagePanel messagePanel = new MessagePanel();
-
-    private JTextArea textarea = new JTextArea(TEXTAREA_PLACEHOLDER, 3, 100);
-
     public ChatClient() {
         super();
+
+        chatClientUI = new ChatClientUI(this);
         tcpClientRunner();
-
-        // Ylin taso
-        mainBox.setBorder(new EmptyBorder(40, 80, 40, 80));
-        mainBox.setPreferredSize(new Dimension(1600, 900));
-
-        // Yläpaneeli
-        Box upperPanel = Box.createHorizontalBox();
-        upperPanel.setPreferredSize(new Dimension(800, 50));
-        upperPanel.setMaximumSize(new Dimension(2000, 50));
-
-        // Kanavavalikko
-        Box channelsArea = Box.createVerticalBox();
-        dropdown = new JComboBox<String>();
-
-        dropdown.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED && !channelsUpdating) {
-                    if (e.getItem().toString() == "New channel") {
-                        NewChannelModal newChannelModal = new NewChannelModal(root, "New channel", ChatClient.this);
-                        newChannelModal.setVisible(true);
-                    } else {
-                        changeChannel(trimChannelName(e.getItem().toString()));
-                    }
-                }
+        while (!tcpClient.isConnected()) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-
-        });
-        dropdown.addPopupMenuListener(new PopupMenuListener() {
-            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
-                channelMenuOpen = true;
-            }
-
-            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
-                channelMenuOpen = false;
-            }
-
-            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
-                channelMenuOpen = false;
-            }
-
-        });
-        channelsArea.add(dropdown);
-        upperPanel.add(channelsArea);
-
-        // Ikonit
-        Box iconArea = Box.createHorizontalBox();
-        iconArea.add(Box.createHorizontalStrut(15));
-        URL imgUrl = getClass().getResource("resources/icons/question-30.png");
-        ImageIcon helpImageIcon = new ImageIcon(imgUrl);
-        JLabel helpIcon = new JLabel(helpImageIcon);
-        helpIcon.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Help clicked");
-                sendPrivateMessage("HAAAIII!", "Jakomu");
-            }
-        });
-        iconArea.add(helpIcon);
-        imgUrl = getClass().getResource("resources/icons/settings-30.png");
-        ImageIcon settingsImageIcon = new ImageIcon(imgUrl);
-        JLabel settingsIcon = new JLabel(settingsImageIcon);
-        settingsIcon.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                SettingsModal settingsModal = new SettingsModal(root, "Settings", ChatClient.this);
-                settingsModal.setVisible(true);
-            }
-        });
-        iconArea.add(settingsIcon);
-        upperPanel.add(iconArea);
-
-        mainBox.add(upperPanel);
-        mainBox.add(Box.createVerticalStrut(20));
-
-        // Chat-paneeli
-        chatPanel.setPreferredSize(new Dimension(800, 610));
-        chatPanel.setMaximumSize(new Dimension(2000, 2000));
-        chatPanel.setMinimumSize(new Dimension(400, 200));
-        chatPanel.setBorder(new RoundedBorder(20));
-        messagePanel.setFont(DEFAULT_FONT);
-        chatPanel.add(messagePanel);
-        mainBox.add(chatPanel);
-        mainBox.add(Box.createVerticalStrut(20));
-
-        // Alapaneeli
-        Box lowerPanel = Box.createHorizontalBox();
-        lowerPanel.setPreferredSize(new Dimension(1300, 120));
-        lowerPanel.setMinimumSize(new Dimension(400, 120));
-        lowerPanel.setMaximumSize(new Dimension(2000, 120));
-        textarea.setFont(DEFAULT_FONT);
-        textarea.setBorder(new RoundedBorder(15));
-        textarea.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
-                if (textarea.getText().equals(TEXTAREA_PLACEHOLDER)) {
-                    textarea.setText("");
-                }
-            }
-
-            public void focusLost(FocusEvent e) {
-                if (textarea.getText().equals("")) {
-                    textarea.setText(TEXTAREA_PLACEHOLDER);
-                }
-            }
-        });
-        // JScrollPane scroller = new JScrollPane(textarea);
-        lowerPanel.add(textarea);
-        lowerPanel.add(Box.createHorizontalStrut(40));
-        JButton sendButton = new JButton("Lähetä");
-        sendButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!textarea.getText().equals(TEXTAREA_PLACEHOLDER)) {
-                    sendMessage();
-                    textarea.setText(TEXTAREA_PLACEHOLDER);
-                }
-            }
-        });
-        lowerPanel.add(sendButton);
-        lowerPanel.add(Box.createHorizontalStrut(40));
-        mainBox.add(lowerPanel);
-
-        root.add(mainBox);
-        root.pack();
-        root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        root.setVisible(true);
-
+            System.out.println("Waiting for connection...");
+        }
         channelChecker();
-        System.out.println("Nyt pitäis olla GUI pystyssä!");
     }
 
     public static void main(String[] args) {
@@ -201,7 +54,6 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
     public void channelChecker() {
         new Thread(new Runnable() {
             public void run() {
-                tcpClient.listChannels();
                 while (true) {
                     if (!channelMenuOpen) {
                         tcpClient.listChannels();
@@ -244,6 +96,18 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         return currentChannel;
     }
 
+    public boolean getChannelsUpdating() {
+        return channelsUpdating;
+    }
+
+    public boolean getChannelMenuOpen() {
+        return channelMenuOpen;
+    }
+
+    public void setChannelMenuOpen(Boolean value) {
+        this.channelMenuOpen = value;
+    }
+
     // TODO tälle toiminto nappiin
     public void setNick(String newNick) {
         // TODO pitää varmaan ilmottaa serverille?
@@ -260,13 +124,13 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
                     if (chatMessage.isDirectMessage()) {
                         // TODO väri viestiin?
                         if (chatMessage.getNick() == getNick()) {
-                            messagePanel.addMessage(chatMessage.getNick() + " (private to "
+                            chatClientUI.addMessage(chatMessage.getNick() + " (private to "
                                     + chatMessage.directMessageRecipient() + "): " + chatMessage.getMessage());
                         } else {
-                            messagePanel.addMessage(chatMessage.getNick() + " (private): " + chatMessage.getMessage());
+                            chatClientUI.addMessage(chatMessage.getNick() + " (private): " + chatMessage.getMessage());
                         }
                     } else {
-                        messagePanel.addMessage(chatMessage.getNick() + ": " + chatMessage.getMessage());
+                        chatClientUI.addMessage(chatMessage.getNick() + ": " + chatMessage.getMessage());
                     }
                 }
                 break;
@@ -279,17 +143,16 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
                 List<String> list = channelMessage.getChannels();
                 list.add("New channel");
                 channels = list.toArray(new String[list.size()]);
-                dropdown.removeAllItems();
+                chatClientUI.clearDropdown();
                 for (String channel : channels) {
                     if (channel.startsWith(trimChannelName(getCurrentChannel()))) {
-                        dropdown.addItem(channel + " - " + getCurrentTopic());
+                        chatClientUI.addDropdownItem(channel + " - " + getCurrentTopic());
                     } else {
-                        dropdown.addItem(channel);
+                        chatClientUI.addDropdownItem(channel);
                     }
                 }
-                dropdown.setSelectedItem(dropdown.getItemAt(findChannelIndex(getCurrentChannel())));
-                dropdown.revalidate();
-                dropdown.repaint();
+                chatClientUI.selectCurrentChannelToDropdown(findChannelIndex(getCurrentChannel()));
+                chatClientUI.updateDropbox();
                 channelsUpdating = false;
                 break;
             }
@@ -298,19 +161,19 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
                 ChangeTopicMessage topicMessage = (ChangeTopicMessage) message;
                 // TODO Päivitä aihe siihen paikkaan, mihin se lopulta toteutetaan UI:lle
                 setCurrentTopic(topicMessage.getTopic());
-                messagePanel.addMessage("Server: " + topicMessage.getTopic());
+                chatClientUI.addMessage("Server: " + topicMessage.getTopic());
                 break;
             }
 
             case Message.STATUS_MESSAGE: {
                 StatusMessage statusMessage = (StatusMessage) message;
-                messagePanel.addMessage("Server: " + statusMessage.getStatus());
+                chatClientUI.addMessage("Server: " + statusMessage.getStatus());
                 break;
             }
 
             case Message.ERROR_MESSAGE: {
                 ErrorMessage msg = (ErrorMessage) message;
-                messagePanel.addMessage("Server: " + msg.getError());
+                chatClientUI.addMessage("Server: " + msg.getError());
                 if (msg.requiresClientShutdown()) {
                     // TODO Sulje koko roska ehkä, tai sitten yhdistä uudelleen...
                 }
@@ -321,8 +184,7 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
                 System.out.println("Received message was unknown");
                 break;
         }
-        chatPanel.revalidate();
-        chatPanel.repaint();
+        chatClientUI.updateChatPanel();
         return true;
     }
 
@@ -333,7 +195,7 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
     }
 
     public void changeChannel(String channel) {
-        clearMessages();
+        chatClientUI.clearMessages();
         JoinMessage message = new JoinMessage(channel);
         String jsonString = message.toJSON();
         tcpClient.write(jsonString);
@@ -355,11 +217,11 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         tcpClient.write(jsonString);
     }
 
-    public void sendMessage() {
-        ChatMessage message = new ChatMessage(getNick(), textarea.getText());
-        String jsonString = message.toJSON();
+    public void sendMessage(String message) {
+        ChatMessage chatMessage = new ChatMessage(getNick(), message);
+        String jsonString = chatMessage.toJSON();
         tcpClient.write(jsonString);
-        handleReceived(message);
+        handleReceived(chatMessage);
     }
 
     public void sendPrivateMessage(String message, String recipientNick) {
@@ -377,12 +239,6 @@ public class ChatClient extends JFrame implements ChatClientDataProvider {
         if (topic != null && !topic.equals("")) {
             changeTopic(topic);
         }
-    }
-
-    // Apufunktioita
-
-    public void clearMessages() {
-        messagePanel.clearMessages();
     }
 
     public int findChannelIndex(String wantedChannel) {

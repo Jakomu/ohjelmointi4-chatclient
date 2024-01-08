@@ -19,7 +19,8 @@ import chatclient.messageTypes.*;
 public class TCPClient implements Runnable {
     private ChatClientDataProvider dataProvider = null;
     private Socket socket;
-    private boolean running = true;
+    private boolean running = false;
+    private boolean firstConnection = true;
 
     private PrintWriter out;
     private BufferedReader in;
@@ -40,7 +41,7 @@ public class TCPClient implements Runnable {
 
     @Override
     public void run() {
-        while (running) {
+        while (running || firstConnection) {
             try {
                 if (socket == null) {
                     connect();
@@ -75,6 +76,8 @@ public class TCPClient implements Runnable {
         out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
         System.out.println("Connecting to server " + hostAddress);
+        running = true;
+        firstConnection = false;
     }
 
     private boolean handleMessage(String data) {
