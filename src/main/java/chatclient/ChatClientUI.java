@@ -5,6 +5,8 @@ import static chatclient.resources.constants.*;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
@@ -19,30 +21,38 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuListener;
 
 import chatclient.modals.*;
+import chatclient.tooltips.CustomTooltip;
 
 public class ChatClientUI extends JFrame {
     protected ChatClient chatClient;
-    // TODO siirrä tästä ylimääräset
     private JFrame root = new JFrame();
     public JComboBox<String> dropdown;
+    private JLabel settingsIcon;
     private Box chatPanel = Box.createHorizontalBox();
     private MessagePanel messagePanel = new MessagePanel();
-
-    private JTextArea textarea = new JTextArea(TEXTAREA_PLACEHOLDER, 3, 100);
+    private JTextArea textarea;
+    private CustomTooltip dropdownTooltip;
+    private CustomTooltip settingsTooltip;
+    private CustomTooltip textareaTooltip;
 
     public ChatClientUI(ChatClient chatClient) {
         super();
         this.chatClient = chatClient;
 
+        root.setSize(new Dimension(getMyUnit(64), getMyUnit(36)));
+        root.setLayout(null);
+        JLayeredPane layeredPane = new JLayeredPane();
+
         // Ylin taso
         Box mainBox = Box.createVerticalBox();
+        mainBox.setSize(1600, 900);
         mainBox.setBorder(new EmptyBorder(40, 80, 40, 80));
-        mainBox.setPreferredSize(new Dimension(1600, 900));
 
         // Yläpaneeli
         Box upperPanel = Box
@@ -55,7 +65,6 @@ public class ChatClientUI extends JFrame {
         dropdown = new JComboBox<String>();
 
         dropdown.addItemListener(new ItemListener() {
-
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED && !chatClient.getChannelsUpdating()) {
                     if (e.getItem().toString() == "New channel") {
@@ -88,19 +97,18 @@ public class ChatClientUI extends JFrame {
         // Ikonit
         Box iconArea = Box.createHorizontalBox();
         iconArea.add(Box.createHorizontalStrut(15));
-        URL imgUrl = getClass().getResource("resources/icons/question-30.png");
-        ImageIcon helpImageIcon = new ImageIcon(imgUrl);
+        URL helpImgUrl = getClass().getResource("resources/icons/question-30.png");
+        ImageIcon helpImageIcon = new ImageIcon(helpImgUrl);
         JLabel helpIcon = new JLabel(helpImageIcon);
         helpIcon.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                System.out.println("Help clicked");
-                chatClient.sendPrivateMessage("HAAAIII!", "Jakomu");
+                toggleTooltips();
             }
         });
         iconArea.add(helpIcon);
-        imgUrl = getClass().getResource("resources/icons/settings-30.png");
-        ImageIcon settingsImageIcon = new ImageIcon(imgUrl);
-        JLabel settingsIcon = new JLabel(settingsImageIcon);
+        URL settingsImgUrl = getClass().getResource("resources/icons/settings-30.png");
+        ImageIcon settingsImageIcon = new ImageIcon(settingsImgUrl);
+        settingsIcon = new JLabel(settingsImageIcon);
         settingsIcon.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 SettingsModal settingsModal = new SettingsModal(root, "Settings", chatClient);
@@ -128,6 +136,7 @@ public class ChatClientUI extends JFrame {
         lowerPanel.setPreferredSize(new Dimension(1300, 120));
         lowerPanel.setMinimumSize(new Dimension(400, 120));
         lowerPanel.setMaximumSize(new Dimension(2000, 120));
+        textarea = new JTextArea(TEXTAREA_PLACEHOLDER, 3, 100);
         textarea.setFont(DEFAULT_FONT);
         textarea.setBorder(new RoundedBorder(15));
         textarea.addFocusListener(new FocusListener() {
@@ -143,6 +152,7 @@ public class ChatClientUI extends JFrame {
                 }
             }
         });
+        // TODO kuikkaan?
         // JScrollPane scroller = new JScrollPane(textarea);
         lowerPanel.add(textarea);
         lowerPanel.add(Box.createHorizontalStrut(40));
@@ -159,10 +169,30 @@ public class ChatClientUI extends JFrame {
         lowerPanel.add(Box.createHorizontalStrut(40));
         mainBox.add(lowerPanel);
 
-        root.add(mainBox);
-        root.pack();
+        // Tooltips
+        dropdownTooltip = new CustomTooltip(DROPDOWN_TOOLTIP_TEXT, new Dimension(getMyUnit(14), getMyUnit(2)));
+        settingsTooltip = new CustomTooltip(SETTINGS_TOOLTIP_TEXT, new Dimension(getMyUnit(4), getMyUnit(10)));
+        textareaTooltip = new CustomTooltip(MESSAGEAREA_TOOLTIP_TEXT, new Dimension(getMyUnit(16), getMyUnit(2)));
+
+        layeredPane.add(mainBox, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.add(dropdownTooltip, JLayeredPane.POPUP_LAYER);
+        layeredPane.add(settingsTooltip, JLayeredPane.POPUP_LAYER);
+        layeredPane.add(textareaTooltip, JLayeredPane.POPUP_LAYER);
+
+        root.setLayeredPane(layeredPane);
         root.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         root.setVisible(true);
+
+        // Listener to allow resizing along window even without layout manager
+        layeredPane.addComponentListener(new ComponentAdapter() {
+
+            public void componentResized(ComponentEvent evt) {
+
+                Dimension size = root.getSize();
+                mainBox.setBounds(0, 0, size.width, size.height);
+            }
+
+        });
     }
 
     public void addMessage(String message) {
@@ -198,5 +228,17 @@ public class ChatClientUI extends JFrame {
     public void openNickModal() {
         NickModal nickModal = new NickModal(root, "Set nickname", chatClient);
         nickModal.setVisible(true);
+    }
+
+    public void toggleTooltips() {
+        if (!dropdownTooltip.isVisible() && !settingsTooltip.isVisible() && !textareaTooltip.isVisible()) {
+            dropdownTooltip.showTooltip(dropdown.getLocationOnScreen());
+            settingsTooltip.showTooltip(settingsIcon.getLocationOnScreen());
+            textareaTooltip.showTooltip(textarea.getLocationOnScreen());
+        } else {
+            dropdownTooltip.hideTooltip();
+            settingsTooltip.hideTooltip();
+            textareaTooltip.hideTooltip();
+        }
     }
 }

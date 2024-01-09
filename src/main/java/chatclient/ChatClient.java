@@ -31,7 +31,7 @@ public class ChatClient implements ChatClientDataProvider {
         int limit = 0;
         while (!tcpClient.isConnected() && limit < 20) {
             try {
-                TimeUnit.MILLISECONDS.sleep(1000);
+                TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
