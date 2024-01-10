@@ -1,6 +1,7 @@
 # General Java .gitignore file from github.com/github/gitignore
 # Compiled class file
 *.class
+.target/
 
 # Log file
 *.log
