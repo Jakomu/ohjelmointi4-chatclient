@@ -182,7 +182,6 @@ public class ChatClient implements ChatClientDataProvider {
                     }
                 }
                 chatClientUI.selectCurrentChannelToDropdown(findChannelIndex(getCurrentChannel()));
-                chatClientUI.updateDropbox();
                 channelsUpdating = false;
                 break;
             }

@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
@@ -23,7 +25,10 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuListener;
 
@@ -36,7 +41,8 @@ public class ChatClientUI extends JFrame {
     public JComboBox<String> dropdown;
     private JLabel settingsIcon;
     private Box chatPanel = Box.createHorizontalBox();
-    private MessagePanel messagePanel = new MessagePanel();
+    protected JTextArea messagePanel = new JTextArea();
+    private JScrollPane scrollPane;
     private JTextField textarea;
     private CustomTooltip dropdownTooltip;
     private CustomTooltip settingsTooltip;
@@ -138,7 +144,13 @@ public class ChatClientUI extends JFrame {
         chatPanel.setMinimumSize(new Dimension(400, 200));
         chatPanel.setBorder(new RoundedBorder(25));
         messagePanel.setFont(DEFAULT_FONT);
-        chatPanel.add(messagePanel);
+        messagePanel.setLineWrap(true);
+        messagePanel.setWrapStyleWord(true);
+        messagePanel.setEditable(false);
+        scrollPane = new JScrollPane(messagePanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        chatPanel.add(scrollPane);
         mainBox.add(chatPanel);
         mainBox.add(Box.createVerticalStrut(40));
 
@@ -214,17 +226,18 @@ public class ChatClientUI extends JFrame {
         });
     }
 
-    public void addMessage(String message) {
-        messagePanel.addMessage(message);
+    public void addMessage(String messageText) {
+        messagePanel.append(messageText + "\n");
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+            }
+        });
     }
 
     public void clearMessages() {
-        messagePanel.clearMessages();
-    }
-
-    public void updateDropbox() {
-        dropdown.revalidate();
-        dropdown.repaint();
+        messagePanel.setText("");
     }
 
     public void updateChatPanel() {
