@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
 import chatclient.messageTypes.*;
 
-// TODO tarviiko JFramea tässä enää?
 public class ChatClient implements ChatClientDataProvider {
 
     // TODO kato todo-lista
@@ -28,7 +27,10 @@ public class ChatClient implements ChatClientDataProvider {
         super();
 
         chatClientUI = new ChatClientUI(this);
-        chatClientUI.openNickModal();
+        if (!Boolean.parseBoolean(System.getProperty("testMode"))) {
+            chatClientUI.openNickModal();
+        }
+
         tcpClientRunner();
 
         System.out.println("Waiting for connection...");
@@ -109,6 +111,10 @@ public class ChatClient implements ChatClientDataProvider {
         return currentTopic;
     }
 
+    public String[] getChannels() {
+        return channels;
+    }
+
     public void setCurrentChannel(String channel) {
         this.currentChannel = channel;
     }
@@ -141,6 +147,10 @@ public class ChatClient implements ChatClientDataProvider {
 
     public AudioPlayer getAudioPlayer() {
         return player;
+    }
+
+    public ChatClientUI getChatClientUI() {
+        return chatClientUI;
     }
 
     public boolean handleReceived(Message message) {
@@ -214,7 +224,6 @@ public class ChatClient implements ChatClientDataProvider {
                 System.out.println("Received message was unknown");
                 break;
         }
-        chatClientUI.updateChatPanel();
         return true;
     }
 

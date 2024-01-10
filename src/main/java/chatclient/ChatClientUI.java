@@ -240,11 +240,6 @@ public class ChatClientUI extends JFrame {
         messagePanel.setText("");
     }
 
-    public void updateChatPanel() {
-        chatPanel.revalidate();
-        chatPanel.repaint();
-    }
-
     public void clearDropdown() {
         dropdown.removeAllItems();
     }
