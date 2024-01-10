@@ -46,6 +46,7 @@ public class NickModal extends Modal {
                 }
             }
         });
+
         inputBox.add(Box.createHorizontalGlue());
         inputBox.add(nickField);
         inputBox.add(Box.createHorizontalStrut(20));
@@ -60,6 +61,7 @@ public class NickModal extends Modal {
                 dispose();
             }
         });
+
         inputBox.add(okButton);
         inputBox.add(Box.createHorizontalGlue());
         mainBox.add(inputBox);

@@ -46,6 +46,7 @@ public class SettingsModal extends Modal {
                 dispose();
             }
         });
+
         topBox.add(closeButton);
         topBox.add(Box.createHorizontalStrut(20));
         settingsBox.add(topBox);
@@ -116,6 +117,7 @@ public class SettingsModal extends Modal {
         topicButton.addActionListener(e -> {
             chatClient.changeTopic(topicInput.getText());
         });
+
         topicInputBox.add(topicButton);
         topicBox.add(topicInputBox);
         settingsInputBox.add(topicBox);
@@ -145,11 +147,13 @@ public class SettingsModal extends Modal {
                 chatClient.getAudioPlayer().playNotification();
             }
         });
+
         if (chatClient.getAudioPlayer().getMute()) {
             soundVolumeSlider.setEnabled(false);
         } else {
             soundVolumeSlider.setEnabled(true);
         }
+
         soundVolumeBox.add(soundVolumeSlider);
         soundVolumeBox.add(Box.createVerticalStrut(20));
         URL muteImgUrl = getClass().getResource("../resources/icons/mute-30.png");
@@ -167,6 +171,7 @@ public class SettingsModal extends Modal {
                 soundVolumeSlider.setEnabled(false);
             }
         });
+
         soundVolumeBox.add(muteButton);
         soundBox.add(soundVolumeBox);
         settingsInputBox.add(soundBox);

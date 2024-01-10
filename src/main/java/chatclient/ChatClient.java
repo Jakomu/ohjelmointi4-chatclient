@@ -130,7 +130,13 @@ public class ChatClient implements ChatClientDataProvider {
     }
 
     public void setNick(String newNick) {
-        this.nick = newNick;
+        if (nick.equals("")) {
+            this.nick = newNick;
+        } else {
+            this.nick = newNick;
+            handleReceived(new StatusMessage("You have changed your nick to " + newNick));
+        }
+
     }
 
     public AudioPlayer getAudioPlayer() {
@@ -213,9 +219,7 @@ public class ChatClient implements ChatClientDataProvider {
         return true;
     }
 
-    // TODO tarviiko tätä ollenkaan?
     public void connectionClosed() {
-        // TODO muokkaa sellaiseksi kuin halutaan
         handleReceived(new StatusMessage("Connection lost..."));
     }
 
@@ -249,10 +253,20 @@ public class ChatClient implements ChatClientDataProvider {
         handleReceived(chatMessage);
     }
 
-    public void sendPrivateMessage(String message, String recipientNick) {
-        ChatMessage privateMessage = new ChatMessage(getNick(), message);
+    public void sendPrivateMessage(String message) {
+        ChatMessage privateMessage;
+        String recipientNick = null;
+        String actualMessage = null;
+        int firstSpace = message.indexOf(' ', 0);
+        if (firstSpace > 0 && firstSpace < message.length()) {
+            recipientNick = message.substring(1, firstSpace);
+            actualMessage = message.substring(firstSpace + 1);
+        }
         if (null != recipientNick) {
+            privateMessage = new ChatMessage(getNick(), actualMessage);
             privateMessage.setRecipient(recipientNick);
+        } else {
+            privateMessage = new ChatMessage(getNick(), message);
         }
         String jsonString = privateMessage.toJSON();
         tcpClient.write(jsonString);

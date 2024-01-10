@@ -46,6 +46,7 @@ public class NewChannelModal extends Modal {
                 dispose();
             }
         });
+
         topBox.add(closeButton);
         topBox.add(Box.createHorizontalStrut(20));
         mainBox.add(topBox);
@@ -68,6 +69,7 @@ public class NewChannelModal extends Modal {
                 }
             }
         });
+
         mainBox.add(Box.createVerticalStrut(20));
         mainBox.add(channelNameField);
 
@@ -89,6 +91,7 @@ public class NewChannelModal extends Modal {
                 }
             }
         });
+
         mainBox.add(Box.createVerticalStrut(20));
         mainBox.add(channelTopicField);
 
@@ -102,14 +105,13 @@ public class NewChannelModal extends Modal {
         createChannelButton.setMinimumSize(new Dimension(120, 40));
         createChannelButton.setFont(DEFAULT_FONT);
         createChannelButton.addActionListener(e -> {
-            if (channelNameField.getText() == CHANNEL_NAME_PLACEHOLDER || channelNameField.getText() == "") {
+            if (channelNameField.getText().equals(CHANNEL_NAME_PLACEHOLDER) || channelNameField.getText().equals("")) {
                 return;
             }
             chatClient.createChannel(channelNameField.getText(), channelTopicField.getText());
             dispose();
         });
-        // TODO onko button jotenkin isompi kuin muut jutut, kun ei mahu jutut tähän
-        // ikkunaan
+
         buttonBox.add(createChannelButton);
         mainBox.add(Box.createVerticalStrut(20));
         mainBox.add(buttonBox);

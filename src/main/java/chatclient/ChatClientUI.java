@@ -81,6 +81,7 @@ public class ChatClientUI extends JFrame {
             }
 
         });
+
         dropdown.addPopupMenuListener(new PopupMenuListener() {
             public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
                 chatClient.setChannelMenuOpen(true);
@@ -95,6 +96,7 @@ public class ChatClientUI extends JFrame {
             }
 
         });
+
         channelsArea.add(dropdown);
         upperPanel.add(channelsArea);
         upperPanel.add(Box.createHorizontalStrut(15));
@@ -110,6 +112,7 @@ public class ChatClientUI extends JFrame {
                 toggleTooltips();
             }
         });
+
         iconArea.add(helpIcon);
         iconArea.add(Box.createHorizontalStrut(10));
         URL settingsImgUrl = getClass().getResource("resources/icons/settings-30.png");
@@ -121,6 +124,7 @@ public class ChatClientUI extends JFrame {
                 settingsModal.setVisible(true);
             }
         });
+
         iconArea.add(settingsIcon);
         iconArea.add(Box.createHorizontalStrut(10));
         upperPanel.add(iconArea);
@@ -162,8 +166,7 @@ public class ChatClientUI extends JFrame {
                 }
             }
         });
-        // TODO kuikkaan?
-        // JScrollPane scroller = new JScrollPane(textarea);
+
         lowerPanel.add(textarea);
         lowerPanel.add(Box.createHorizontalStrut(30));
         JButton sendButton = new JButton("Lähetä");
@@ -171,11 +174,16 @@ public class ChatClientUI extends JFrame {
         sendButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!textarea.getText().equals(TEXTAREA_PLACEHOLDER)) {
-                    chatClient.sendMessage(textarea.getText());
+                    if (textarea.getText().startsWith("@")) {
+                        chatClient.sendPrivateMessage(textarea.getText());
+                    } else {
+                        chatClient.sendMessage(textarea.getText());
+                    }
                     textarea.setText(TEXTAREA_PLACEHOLDER);
                 }
             }
         });
+
         lowerPanel.add(sendButton);
         lowerPanel.add(Box.createHorizontalStrut(30));
         mainBox.add(lowerPanel);
