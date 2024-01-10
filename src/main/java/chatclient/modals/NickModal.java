@@ -3,10 +3,14 @@ package chatclient.modals;
 import static chatclient.resources.constants.*;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.net.URL;
 
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,6 +22,8 @@ public class NickModal extends Modal {
 
     public NickModal(JFrame parent, String title, ChatClient chatClient) {
         super(parent, new Dimension(500, 200), title, chatClient);
+
+        // Label
         Box mainBox = Box.createVerticalBox();
         mainBox.add(Box.createVerticalStrut(20));
         JLabel titleLabel = new JLabel(title);
@@ -27,6 +33,8 @@ public class NickModal extends Modal {
         titleLabel.setFont(TITLE_FONT);
         mainBox.add(titleLabel);
         mainBox.add(Box.createVerticalStrut(20));
+
+        // Nick field
         Box inputBox = Box.createHorizontalBox();
         JTextField nickField = new JTextField(NICKNAME_PLACEHOLDER);
         nickField.setPreferredSize(new Dimension(280, 40));
@@ -46,11 +54,21 @@ public class NickModal extends Modal {
                 }
             }
         });
+        nickField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (!nickField.getText().equals(NICKNAME_PLACEHOLDER) && !nickField.getText().equals("")) {
+                    chatClient.setNick(nickField.getText());
+                    dispose();
+                }
+            }
+        });
 
         inputBox.add(Box.createHorizontalGlue());
         inputBox.add(nickField);
         inputBox.add(Box.createHorizontalStrut(20));
-        JButton okButton = new JButton("OK");
+        URL okImgUrl = getClass().getResource(OK_ICON_PATH);
+        ImageIcon okImageIcon = new ImageIcon(okImgUrl);
+        JButton okButton = new JButton(okImageIcon);
         okButton.setFont(DEFAULT_FONT);
         okButton.setPreferredSize(new Dimension(40, 40));
         okButton.setMaximumSize(new Dimension(40, 40));

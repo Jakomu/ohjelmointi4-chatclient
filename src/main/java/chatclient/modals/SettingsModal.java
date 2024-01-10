@@ -21,6 +21,8 @@ public class SettingsModal extends Modal {
 
     public SettingsModal(JFrame parent, String title, ChatClient chatClient) {
         super(parent, new Dimension(500, 440), title, chatClient);
+        URL okImgUrl = getClass().getResource(OK_ICON_PATH);
+        ImageIcon okImageIcon = new ImageIcon(okImgUrl);
 
         Box settingsBox = Box.createVerticalBox();
 
@@ -65,7 +67,6 @@ public class SettingsModal extends Modal {
         nickLabel.setPreferredSize(new Dimension(300, 40));
         nickLabel.setMaximumSize(new Dimension(300, 40));
         nickLabel.setMinimumSize(new Dimension(300, 40));
-        // nickLabel.setAlignmentX(LEFT_ALIGNMENT); // TODO ei toimi
         nickBox.add(nickLabel);
         Box nickInputBox = Box.createHorizontalBox();
         JTextField nickInput = new JTextField();
@@ -76,8 +77,7 @@ public class SettingsModal extends Modal {
         nickInput.setText(chatClient.getNick());
         nickInputBox.add(nickInput);
         nickInputBox.add(Box.createVerticalStrut(20));
-        JButton nickButton = new JButton("OK");
-        nickButton.setFont(DEFAULT_FONT);
+        JButton nickButton = new JButton(okImageIcon);
         nickButton.setPreferredSize(new Dimension(40, 40));
         nickButton.setMaximumSize(new Dimension(40, 40));
         nickButton.setMinimumSize(new Dimension(40, 40));
@@ -109,8 +109,7 @@ public class SettingsModal extends Modal {
         topicInput.setText(chatClient.getCurrentTopic());
         topicInputBox.add(topicInput);
         topicInputBox.add(Box.createVerticalStrut(20));
-        JButton topicButton = new JButton("OK");
-        topicButton.setFont(DEFAULT_FONT);
+        JButton topicButton = new JButton(okImageIcon);
         topicButton.setPreferredSize(new Dimension(40, 40));
         topicButton.setMaximumSize(new Dimension(40, 40));
         topicButton.setMinimumSize(new Dimension(40, 40));
@@ -122,6 +121,7 @@ public class SettingsModal extends Modal {
         topicBox.add(topicInputBox);
         settingsInputBox.add(topicBox);
 
+        // Sound setting
         settingsInputBox.add(Box.createVerticalStrut(25));
         Box soundBox = Box.createVerticalBox();
         soundBox.setPreferredSize(new Dimension(300, 80));

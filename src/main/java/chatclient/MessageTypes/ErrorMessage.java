@@ -22,8 +22,6 @@ public class ErrorMessage extends Message {
         return error;
     }
 
-    // TODO Jos vaihdetaan siihen että yritetään yhdistää uudelleen, niin vaihdetaan
-    // nimi?
     public boolean requiresClientShutdown() {
         return requiresShutdown != 0;
     }

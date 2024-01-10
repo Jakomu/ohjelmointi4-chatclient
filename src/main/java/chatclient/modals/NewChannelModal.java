@@ -23,6 +23,7 @@ public class NewChannelModal extends Modal {
     public NewChannelModal(JFrame parent, String title, ChatClient chatClient) {
         super(parent, new Dimension(400, 300), title, chatClient);
 
+        // Label
         Box mainBox = Box.createVerticalBox();
         mainBox.add(Box.createVerticalStrut(20));
         Box topBox = Box.createHorizontalBox();
@@ -51,6 +52,7 @@ public class NewChannelModal extends Modal {
         topBox.add(Box.createHorizontalStrut(20));
         mainBox.add(topBox);
 
+        // Channel name field
         JTextField channelNameField = new JTextField(CHANNEL_NAME_PLACEHOLDER);
         channelNameField.setPreferredSize(new Dimension(320, 40));
         channelNameField.setMaximumSize(new Dimension(320, 40));
@@ -73,6 +75,7 @@ public class NewChannelModal extends Modal {
         mainBox.add(Box.createVerticalStrut(20));
         mainBox.add(channelNameField);
 
+        // Channel topic field
         JTextField channelTopicField = new JTextField(CHANNEL_TOPIC_PLACEHOLDER);
         channelTopicField.setPreferredSize(new Dimension(320, 40));
         channelTopicField.setMaximumSize(new Dimension(320, 40));
@@ -95,14 +98,15 @@ public class NewChannelModal extends Modal {
         mainBox.add(Box.createVerticalStrut(20));
         mainBox.add(channelTopicField);
 
+        // Create channel button
         Box buttonBox = Box.createHorizontalBox();
-        buttonBox.setPreferredSize(new Dimension(120, 40));
-        buttonBox.setMaximumSize(new Dimension(120, 40));
-        buttonBox.setMinimumSize(new Dimension(120, 40));
+        buttonBox.setPreferredSize(new Dimension(160, 40));
+        buttonBox.setMaximumSize(new Dimension(160, 40));
+        buttonBox.setMinimumSize(new Dimension(160, 40));
         JButton createChannelButton = new JButton("Create channel");
-        createChannelButton.setPreferredSize(new Dimension(120, 40));
-        createChannelButton.setMaximumSize(new Dimension(120, 40));
-        createChannelButton.setMinimumSize(new Dimension(120, 40));
+        createChannelButton.setPreferredSize(new Dimension(160, 40));
+        createChannelButton.setMaximumSize(new Dimension(160, 40));
+        createChannelButton.setMinimumSize(new Dimension(160, 40));
         createChannelButton.setFont(DEFAULT_FONT);
         createChannelButton.addActionListener(e -> {
             if (channelNameField.getText().equals(CHANNEL_NAME_PLACEHOLDER) || channelNameField.getText().equals("")) {

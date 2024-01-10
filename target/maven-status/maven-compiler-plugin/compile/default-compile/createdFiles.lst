@@ -4,6 +4,7 @@ chatclient\modals\NickModal.class
 chatclient\messageTypes\ChatMessage.class
 chatclient\TCPClient.class
 chatclient\ChatClient$2.class
+chatclient\ChatClientUI$9.class
 chatclient\ChatClientUI$4.class
 chatclient\messageTypes\ErrorMessage.class
 chatclient\ChatClientUI$8.class
@@ -17,7 +18,6 @@ chatclient\modals\NewChannelModal$3.class
 chatclient\ChatClientUI$6.class
 chatclient\messageTypes\JoinMessage.class
 chatclient\modals\SettingsModal.class
-chatclient\CustomListCellRenderer.class
 chatclient\messageTypes\Message.class
 chatclient\ChatClientUI$5.class
 chatclient\tooltips\CustomTooltip.class
@@ -31,6 +31,7 @@ chatclient\ChatClientUI$2.class
 chatclient\modals\NewChannelModal$2.class
 chatclient\modals\SettingsModal$1.class
 chatclient\modals\NewChannelModal.class
+chatclient\modals\NickModal$2.class
 chatclient\ChatClientUI$7.class
 chatclient\ChatClientDataProvider.class
 chatclient\ChatClient.class

@@ -9,7 +9,6 @@ import chatclient.messageTypes.*;
 
 public class ChatClient implements ChatClientDataProvider {
 
-    // TODO kato todo-lista
     private static TCPClient tcpClient;
     private ChatClientUI chatClientUI;
     private static int serverPort;
@@ -73,7 +72,7 @@ public class ChatClient implements ChatClientDataProvider {
         new Thread(tcpClient).start();
     }
 
-    // Päivitä kanavat 10 sekunnin välein
+    // Update channels every 10 seconds
     public void channelChecker() {
         new Thread(new Runnable() {
             public void run() {
@@ -156,12 +155,9 @@ public class ChatClient implements ChatClientDataProvider {
     public boolean handleReceived(Message message) {
         switch (message.getType()) {
             case Message.CHAT_MESSAGE: {
-                // TODO onko tämä tarpeellinen?
                 if (message instanceof ChatMessage) {
                     ChatMessage chatMessage = (ChatMessage) message;
-                    System.out.println(chatMessage.getMessage());
                     if (chatMessage.isDirectMessage()) {
-                        // TODO väri viestiin?
                         if (chatMessage.getNick() == getNick()) {
                             chatClientUI.addMessage(chatMessage.getNick() + " (private to "
                                     + chatMessage.directMessageRecipient() + "): " + chatMessage.getMessage());
@@ -179,7 +175,6 @@ public class ChatClient implements ChatClientDataProvider {
             case Message.LIST_CHANNELS: {
                 channelsUpdating = true;
                 ListChannelsMessage channelMessage = (ListChannelsMessage) message;
-                System.out.println("kanavat tulloo!");
                 List<String> list = channelMessage.getChannels();
                 list.add("New channel");
                 channels = list.toArray(new String[list.size()]);

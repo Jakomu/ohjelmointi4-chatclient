@@ -34,7 +34,7 @@ public class TCPClient implements Runnable {
     }
 
     public synchronized void write(String message) {
-        System.out.println("DEBUG OUT: " + message);
+        // System.out.println("DEBUG OUT: " + message);
         out.write(message + "\n");
         out.flush();
     }
