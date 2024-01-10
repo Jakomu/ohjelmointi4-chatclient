@@ -48,18 +48,19 @@ public class TCPClient implements Runnable {
                 }
                 String data;
                 while ((data = in.readLine()) != null) {
-                    // ChatClient.println("DEBUG IN: " + data, ChatClient.colorInfo);
+                    // System.out.println("DEBUG IN: " + data);
                     boolean continueReading = handleMessage(data);
                     if (!continueReading) {
                         break;
                     }
                 }
             } catch (EOFException e) {
-                // ChatClient.println("ChatSession: EOFException", ChatClient.colorError);
+                e.printStackTrace();
             } catch (IOException e) {
-                // ChatClient.println("ChatSession: IOException", ChatClient.colorError);
-                ErrorMessage msg = new ErrorMessage("Cannot connect: " + e.getLocalizedMessage(), true);
-                dataProvider.handleReceived(msg);
+                e.printStackTrace();
+                // ErrorMessage msg = new ErrorMessage("Cannot connect: " +
+                // e.getLocalizedMessage(), true);
+                // dataProvider.handleReceived(msg);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -108,8 +109,15 @@ public class TCPClient implements Runnable {
                 out = null;
                 socket = null;
                 dataProvider.connectionClosed();
+                firstConnection = true;
             }
         }
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        reconnect();
     }
 
     public void changeChannelTo(String channel) {
@@ -130,4 +138,8 @@ public class TCPClient implements Runnable {
         write(msg);
     }
 
+    public void reconnect() {
+        dataProvider.handleReceived(new StatusMessage("Reconnecting..."));
+        run();
+    }
 }

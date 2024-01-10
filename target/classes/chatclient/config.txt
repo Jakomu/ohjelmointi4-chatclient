@@ -1,0 +1,2 @@
+server=localhost
+serverport=10000

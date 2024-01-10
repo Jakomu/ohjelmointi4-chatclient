@@ -13,7 +13,7 @@ public class CustomTooltip extends JLabel {
     private Dimension tooltipSize;
 
     public CustomTooltip(String text, Dimension size) {
-        super(text);
+        super(" " + text);
         tooltipSize = size;
 
         setBackground(TOOLTIP_COLOR);

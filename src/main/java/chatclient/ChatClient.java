@@ -1,5 +1,7 @@
 package chatclient;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
@@ -11,8 +13,8 @@ public class ChatClient implements ChatClientDataProvider {
     // TODO kato todo-lista
     private static TCPClient tcpClient;
     private ChatClientUI chatClientUI;
-    private int serverPort = 10000;
-    private String currentServer = "localhost";
+    private static int serverPort;
+    private static String server;
     private String nick = "";
 
     private String[] channels = new String[0];
@@ -28,20 +30,35 @@ public class ChatClient implements ChatClientDataProvider {
         chatClientUI = new ChatClientUI(this);
         chatClientUI.openNickModal();
         tcpClientRunner();
-        int limit = 0;
-        while (!tcpClient.isConnected() && limit < 20) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Waiting for connection...");
-            limit++;
-        }
+
+        System.out.println("Waiting for connection...");
+        handleReceived(new StatusMessage("Waiting for connection..."));
         channelChecker();
     }
 
     public static void main(String[] args) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\chatclient\\config.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("server=")) {
+                    String[] parts = line.split("=");
+                    if (parts.length > 1) {
+                        System.out.println("Server: " + parts[1]);
+                        server = parts[1];
+                    }
+                } else if (line.startsWith("serverport=")) {
+                    String[] parts = line.split("=");
+                    if (parts.length > 1) {
+                        System.out.println("Serverport: " + parts[1]);
+                        serverPort = Integer.parseInt(parts[1]);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new ChatClient();
@@ -59,7 +76,7 @@ public class ChatClient implements ChatClientDataProvider {
         new Thread(new Runnable() {
             public void run() {
                 while (true) {
-                    if (!channelMenuOpen) {
+                    if (!channelMenuOpen && tcpClient.isConnected()) {
                         tcpClient.listChannels();
                     }
                     try {
@@ -73,7 +90,7 @@ public class ChatClient implements ChatClientDataProvider {
     }
 
     public String getServer() {
-        return currentServer;
+        return server;
     }
 
     public int getPort() {
@@ -183,7 +200,6 @@ public class ChatClient implements ChatClientDataProvider {
                 ErrorMessage msg = (ErrorMessage) message;
                 chatClientUI.addMessage("Server: " + msg.getError());
                 if (msg.requiresClientShutdown()) {
-                    // TODO Sulje koko roska ehkä, tai sitten yhdistä uudelleen...
                 }
                 player.playNotification();
                 break;
