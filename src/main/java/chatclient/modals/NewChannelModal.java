@@ -21,15 +21,15 @@ import chatclient.ChatClient;
 public class NewChannelModal extends Modal {
 
     public NewChannelModal(JFrame parent, String title, ChatClient chatClient) {
-        super(parent, new Dimension(getMyUnit(20), getMyUnit(14)), title, chatClient);
+        super(parent, new Dimension(400, 300), title, chatClient);
 
         Box mainBox = Box.createVerticalBox();
-        mainBox.add(Box.createVerticalStrut(getMyUnit(1)));
+        mainBox.add(Box.createVerticalStrut(20));
         Box topBox = Box.createHorizontalBox();
-        topBox.setPreferredSize(new Dimension(getMyUnit(20), getMyUnit(2)));
-        topBox.setMaximumSize(new Dimension(getMyUnit(20), getMyUnit(2)));
-        topBox.setMinimumSize(new Dimension(getMyUnit(20), getMyUnit(2)));
-        topBox.add(Box.createHorizontalStrut(getMyUnit(3)));
+        topBox.setPreferredSize(new Dimension(400, 40));
+        topBox.setMaximumSize(new Dimension(400, 40));
+        topBox.setMinimumSize(new Dimension(400, 40));
+        topBox.add(Box.createHorizontalStrut(60));
         JLabel titleLabel = new JLabel(title);
         titleLabel.setFont(TITLE_FONT);
         topBox.add(Box.createHorizontalGlue());
@@ -38,22 +38,22 @@ public class NewChannelModal extends Modal {
         URL imgUrl = getClass().getResource("../resources/icons/close-30.png");
         ImageIcon closeImageIcon = new ImageIcon(imgUrl);
         JLabel closeButton = new JLabel(closeImageIcon);
-        closeButton.setPreferredSize(new Dimension(getMyUnit(2), getMyUnit(2)));
-        closeButton.setMaximumSize(new Dimension(getMyUnit(2), getMyUnit(2)));
-        closeButton.setMinimumSize(new Dimension(getMyUnit(2), getMyUnit(2)));
+        closeButton.setPreferredSize(new Dimension(40, 40));
+        closeButton.setMaximumSize(new Dimension(40, 40));
+        closeButton.setMinimumSize(new Dimension(40, 40));
         closeButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 dispose();
             }
         });
         topBox.add(closeButton);
-        topBox.add(Box.createHorizontalStrut(getMyUnit(1)));
+        topBox.add(Box.createHorizontalStrut(20));
         mainBox.add(topBox);
 
         JTextField channelNameField = new JTextField(CHANNEL_NAME_PLACEHOLDER);
-        channelNameField.setPreferredSize(new Dimension(getMyUnit(16), getMyUnit(2)));
-        channelNameField.setMaximumSize(new Dimension(getMyUnit(16), getMyUnit(2)));
-        channelNameField.setMinimumSize(new Dimension(getMyUnit(16), getMyUnit(2)));
+        channelNameField.setPreferredSize(new Dimension(320, 40));
+        channelNameField.setMaximumSize(new Dimension(320, 40));
+        channelNameField.setMinimumSize(new Dimension(320, 40));
         channelNameField.setFont(DEFAULT_FONT);
         channelNameField.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
@@ -68,13 +68,13 @@ public class NewChannelModal extends Modal {
                 }
             }
         });
-        mainBox.add(Box.createVerticalStrut(getMyUnit(1)));
+        mainBox.add(Box.createVerticalStrut(20));
         mainBox.add(channelNameField);
 
         JTextField channelTopicField = new JTextField(CHANNEL_TOPIC_PLACEHOLDER);
-        channelTopicField.setPreferredSize(new Dimension(getMyUnit(16), getMyUnit(2)));
-        channelTopicField.setMaximumSize(new Dimension(getMyUnit(16), getMyUnit(2)));
-        channelTopicField.setMinimumSize(new Dimension(getMyUnit(16), getMyUnit(2)));
+        channelTopicField.setPreferredSize(new Dimension(320, 40));
+        channelTopicField.setMaximumSize(new Dimension(320, 40));
+        channelTopicField.setMinimumSize(new Dimension(320, 40));
         channelTopicField.setFont(DEFAULT_FONT);
         channelTopicField.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
@@ -89,17 +89,17 @@ public class NewChannelModal extends Modal {
                 }
             }
         });
-        mainBox.add(Box.createVerticalStrut(getMyUnit(1)));
+        mainBox.add(Box.createVerticalStrut(20));
         mainBox.add(channelTopicField);
 
         Box buttonBox = Box.createHorizontalBox();
-        buttonBox.setPreferredSize(new Dimension(getMyUnit(6), getMyUnit(2)));
-        buttonBox.setMaximumSize(new Dimension(getMyUnit(6), getMyUnit(2)));
-        buttonBox.setMinimumSize(new Dimension(getMyUnit(6), getMyUnit(2)));
+        buttonBox.setPreferredSize(new Dimension(120, 40));
+        buttonBox.setMaximumSize(new Dimension(120, 40));
+        buttonBox.setMinimumSize(new Dimension(120, 40));
         JButton createChannelButton = new JButton("Create channel");
-        createChannelButton.setPreferredSize(new Dimension(getMyUnit(6), getMyUnit(2)));
-        createChannelButton.setMaximumSize(new Dimension(getMyUnit(6), getMyUnit(2)));
-        createChannelButton.setMinimumSize(new Dimension(getMyUnit(6), getMyUnit(2)));
+        createChannelButton.setPreferredSize(new Dimension(120, 40));
+        createChannelButton.setMaximumSize(new Dimension(120, 40));
+        createChannelButton.setMinimumSize(new Dimension(120, 40));
         createChannelButton.setFont(DEFAULT_FONT);
         createChannelButton.addActionListener(e -> {
             if (channelNameField.getText() == CHANNEL_NAME_PLACEHOLDER || channelNameField.getText() == "") {
@@ -111,10 +111,10 @@ public class NewChannelModal extends Modal {
         // TODO onko button jotenkin isompi kuin muut jutut, kun ei mahu jutut tähän
         // ikkunaan
         buttonBox.add(createChannelButton);
-        mainBox.add(Box.createVerticalStrut(getMyUnit(1)));
+        mainBox.add(Box.createVerticalStrut(20));
         mainBox.add(buttonBox);
 
-        mainBox.add(Box.createVerticalStrut(getMyUnit(1)));
+        mainBox.add(Box.createVerticalStrut(20));
         add(mainBox);
     }
 

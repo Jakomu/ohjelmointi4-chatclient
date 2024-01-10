@@ -19,13 +19,4 @@ public class constants {
     public static final String DROPDOWN_TOOLTIP_TEXT = "Click to see all channels or create a new one";
     public static final String SETTINGS_TOOLTIP_TEXT = "Click to see channel, nick and sound settings";
     public static final String MESSAGEAREA_TOOLTIP_TEXT = "You can send private messages by writing \"@nickname Your message\" i.e. \"@John Hello John!\"";
-
-    // Measures
-    public static final int MY_UNIT = 25;
-
-    // This is used to make it easier to get the correct size for the components
-    // from design
-    public static int getMyUnit(int amount) {
-        return amount * MY_UNIT;
-    }
 }

@@ -17,21 +17,21 @@ import chatclient.ChatClient;
 public class NickModal extends Modal {
 
     public NickModal(JFrame parent, String title, ChatClient chatClient) {
-        super(parent, new Dimension(getMyUnit(25), getMyUnit(10)), title, chatClient);
+        super(parent, new Dimension(500, 200), title, chatClient);
         Box mainBox = Box.createVerticalBox();
-        mainBox.add(Box.createVerticalStrut(getMyUnit(1)));
+        mainBox.add(Box.createVerticalStrut(20));
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setPreferredSize(new Dimension(getMyUnit(15), getMyUnit(2)));
-        titleLabel.setMaximumSize(new Dimension(getMyUnit(15), getMyUnit(2)));
-        titleLabel.setMinimumSize(new Dimension(getMyUnit(15), getMyUnit(2)));
+        titleLabel.setPreferredSize(new Dimension(300, 40));
+        titleLabel.setMaximumSize(new Dimension(300, 40));
+        titleLabel.setMinimumSize(new Dimension(300, 40));
         titleLabel.setFont(TITLE_FONT);
         mainBox.add(titleLabel);
-        mainBox.add(Box.createVerticalStrut(getMyUnit(1)));
+        mainBox.add(Box.createVerticalStrut(20));
         Box inputBox = Box.createHorizontalBox();
         JTextField nickField = new JTextField(NICKNAME_PLACEHOLDER);
-        nickField.setPreferredSize(new Dimension(getMyUnit(14), getMyUnit(2)));
-        nickField.setMaximumSize(new Dimension(getMyUnit(14), getMyUnit(2)));
-        nickField.setMinimumSize(new Dimension(getMyUnit(14), getMyUnit(2)));
+        nickField.setPreferredSize(new Dimension(280, 40));
+        nickField.setMaximumSize(new Dimension(280, 40));
+        nickField.setMinimumSize(new Dimension(280, 40));
         nickField.setFont(DEFAULT_FONT);
         nickField.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
@@ -48,12 +48,12 @@ public class NickModal extends Modal {
         });
         inputBox.add(Box.createHorizontalGlue());
         inputBox.add(nickField);
-        inputBox.add(Box.createHorizontalStrut(getMyUnit(1)));
+        inputBox.add(Box.createHorizontalStrut(20));
         JButton okButton = new JButton("OK");
         okButton.setFont(DEFAULT_FONT);
-        okButton.setPreferredSize(new Dimension(getMyUnit(2), getMyUnit(2)));
-        okButton.setMaximumSize(new Dimension(getMyUnit(2), getMyUnit(2)));
-        okButton.setMinimumSize(new Dimension(getMyUnit(2), getMyUnit(2)));
+        okButton.setPreferredSize(new Dimension(40, 40));
+        okButton.setMaximumSize(new Dimension(40, 40));
+        okButton.setMinimumSize(new Dimension(40, 40));
         okButton.addActionListener(e -> {
             if (!nickField.getText().equals(NICKNAME_PLACEHOLDER) && !nickField.getText().equals("")) {
                 chatClient.setNick(nickField.getText());
@@ -63,7 +63,7 @@ public class NickModal extends Modal {
         inputBox.add(okButton);
         inputBox.add(Box.createHorizontalGlue());
         mainBox.add(inputBox);
-        mainBox.add(Box.createVerticalStrut(getMyUnit(2)));
+        mainBox.add(Box.createVerticalStrut(40));
 
         add(mainBox);
     }

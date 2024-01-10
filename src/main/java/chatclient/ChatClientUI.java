@@ -3,6 +3,7 @@ package chatclient;
 import static chatclient.resources.constants.*;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -22,7 +23,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuListener;
 
@@ -36,7 +37,7 @@ public class ChatClientUI extends JFrame {
     private JLabel settingsIcon;
     private Box chatPanel = Box.createHorizontalBox();
     private MessagePanel messagePanel = new MessagePanel();
-    private JTextArea textarea;
+    private JTextField textarea;
     private CustomTooltip dropdownTooltip;
     private CustomTooltip settingsTooltip;
     private CustomTooltip textareaTooltip;
@@ -45,24 +46,27 @@ public class ChatClientUI extends JFrame {
         super();
         this.chatClient = chatClient;
 
-        root.setSize(new Dimension(getMyUnit(64), getMyUnit(36)));
+        root.setSize(new Dimension(1280, 720));
         root.setLayout(null);
         JLayeredPane layeredPane = new JLayeredPane();
 
         // Ylin taso
         Box mainBox = Box.createVerticalBox();
-        mainBox.setSize(1600, 900);
-        mainBox.setBorder(new EmptyBorder(40, 80, 40, 80));
+        mainBox.setSize(1280, 720);
+        mainBox.setBorder(new EmptyBorder(40, 40, 40, 40));
 
         // Yläpaneeli
-        Box upperPanel = Box
-                .createHorizontalBox();
-        upperPanel.setPreferredSize(new Dimension(800, 50));
-        upperPanel.setMaximumSize(new Dimension(2000, 50));
+        Box upperPanel = Box.createHorizontalBox();
+        upperPanel.setPreferredSize(new Dimension(1040, 40));
+        upperPanel.setMaximumSize(new Dimension(2000, 80));
+        upperPanel.setMinimumSize(new Dimension(400, 40));
 
         // Kanavavalikko
         Box channelsArea = Box.createVerticalBox();
         dropdown = new JComboBox<String>();
+        dropdown.setPreferredSize(new Dimension(500, 40));
+        dropdown.setMaximumSize(new Dimension(2000, 40));
+        dropdown.setMinimumSize(new Dimension(220, 40));
 
         dropdown.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -93,10 +97,11 @@ public class ChatClientUI extends JFrame {
         });
         channelsArea.add(dropdown);
         upperPanel.add(channelsArea);
+        upperPanel.add(Box.createHorizontalStrut(15));
 
         // Ikonit
         Box iconArea = Box.createHorizontalBox();
-        iconArea.add(Box.createHorizontalStrut(15));
+        iconArea.add(Box.createHorizontalStrut(5));
         URL helpImgUrl = getClass().getResource("resources/icons/question-30.png");
         ImageIcon helpImageIcon = new ImageIcon(helpImgUrl);
         JLabel helpIcon = new JLabel(helpImageIcon);
@@ -106,6 +111,7 @@ public class ChatClientUI extends JFrame {
             }
         });
         iconArea.add(helpIcon);
+        iconArea.add(Box.createHorizontalStrut(10));
         URL settingsImgUrl = getClass().getResource("resources/icons/settings-30.png");
         ImageIcon settingsImageIcon = new ImageIcon(settingsImgUrl);
         settingsIcon = new JLabel(settingsImageIcon);
@@ -116,29 +122,33 @@ public class ChatClientUI extends JFrame {
             }
         });
         iconArea.add(settingsIcon);
+        iconArea.add(Box.createHorizontalStrut(10));
         upperPanel.add(iconArea);
 
         mainBox.add(upperPanel);
-        mainBox.add(Box.createVerticalStrut(20));
+        mainBox.add(Box.createVerticalStrut(40));
 
         // Chat-paneeli
-        chatPanel.setPreferredSize(new Dimension(800, 610));
+        chatPanel.setPreferredSize(new Dimension(800, 440));
         chatPanel.setMaximumSize(new Dimension(2000, 2000));
         chatPanel.setMinimumSize(new Dimension(400, 200));
-        chatPanel.setBorder(new RoundedBorder(20));
+        chatPanel.setBorder(new RoundedBorder(25));
         messagePanel.setFont(DEFAULT_FONT);
         chatPanel.add(messagePanel);
         mainBox.add(chatPanel);
-        mainBox.add(Box.createVerticalStrut(20));
+        mainBox.add(Box.createVerticalStrut(40));
 
         // Alapaneeli
         Box lowerPanel = Box.createHorizontalBox();
-        lowerPanel.setPreferredSize(new Dimension(1300, 120));
-        lowerPanel.setMinimumSize(new Dimension(400, 120));
-        lowerPanel.setMaximumSize(new Dimension(2000, 120));
-        textarea = new JTextArea(TEXTAREA_PLACEHOLDER, 3, 100);
+        lowerPanel.setPreferredSize(new Dimension(1040, 100));
+        lowerPanel.setMinimumSize(new Dimension(400, 100));
+        lowerPanel.setMaximumSize(new Dimension(2000, 100));
+        textarea = new JTextField(TEXTAREA_PLACEHOLDER);
         textarea.setFont(DEFAULT_FONT);
         textarea.setBorder(new RoundedBorder(15));
+        textarea.setPreferredSize(new Dimension(500, 80));
+        textarea.setMaximumSize(new Dimension(2000, 80));
+        textarea.setMinimumSize(new Dimension(220, 40));
         textarea.addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
                 if (textarea.getText().equals(TEXTAREA_PLACEHOLDER)) {
@@ -155,8 +165,9 @@ public class ChatClientUI extends JFrame {
         // TODO kuikkaan?
         // JScrollPane scroller = new JScrollPane(textarea);
         lowerPanel.add(textarea);
-        lowerPanel.add(Box.createHorizontalStrut(40));
+        lowerPanel.add(Box.createHorizontalStrut(30));
         JButton sendButton = new JButton("Lähetä");
+        sendButton.setPreferredSize(new Dimension(100, 80));
         sendButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!textarea.getText().equals(TEXTAREA_PLACEHOLDER)) {
@@ -166,13 +177,13 @@ public class ChatClientUI extends JFrame {
             }
         });
         lowerPanel.add(sendButton);
-        lowerPanel.add(Box.createHorizontalStrut(40));
+        lowerPanel.add(Box.createHorizontalStrut(30));
         mainBox.add(lowerPanel);
 
         // Tooltips
-        dropdownTooltip = new CustomTooltip(DROPDOWN_TOOLTIP_TEXT, new Dimension(getMyUnit(14), getMyUnit(2)));
-        settingsTooltip = new CustomTooltip(SETTINGS_TOOLTIP_TEXT, new Dimension(getMyUnit(4), getMyUnit(10)));
-        textareaTooltip = new CustomTooltip(MESSAGEAREA_TOOLTIP_TEXT, new Dimension(getMyUnit(16), getMyUnit(2)));
+        dropdownTooltip = new CustomTooltip(DROPDOWN_TOOLTIP_TEXT, new Dimension(360, 40));
+        settingsTooltip = new CustomTooltip(SETTINGS_TOOLTIP_TEXT, new Dimension(380, 40));
+        textareaTooltip = new CustomTooltip(MESSAGEAREA_TOOLTIP_TEXT, new Dimension(720, 40));
 
         layeredPane.add(mainBox, JLayeredPane.DEFAULT_LAYER);
         layeredPane.add(dropdownTooltip, JLayeredPane.POPUP_LAYER);
@@ -232,9 +243,18 @@ public class ChatClientUI extends JFrame {
 
     public void toggleTooltips() {
         if (!dropdownTooltip.isVisible() && !settingsTooltip.isVisible() && !textareaTooltip.isVisible()) {
-            dropdownTooltip.showTooltip(dropdown.getLocationOnScreen());
-            settingsTooltip.showTooltip(settingsIcon.getLocationOnScreen());
-            textareaTooltip.showTooltip(textarea.getLocationOnScreen());
+            Point dropdownLocation = dropdown.getLocationOnScreen();
+            dropdownLocation.x += 40;
+            Point settingsLocation = settingsIcon.getLocationOnScreen();
+            settingsLocation.x -= 370;
+            settingsLocation.y -= 10;
+            Point textareaLocation = textarea.getLocationOnScreen();
+            textareaLocation.x += 40;
+            textareaLocation.y -= 40;
+
+            dropdownTooltip.showTooltip(dropdownLocation);
+            settingsTooltip.showTooltip(settingsLocation);
+            textareaTooltip.showTooltip(textareaLocation);
         } else {
             dropdownTooltip.hideTooltip();
             settingsTooltip.hideTooltip();
