@@ -21,5 +21,5 @@ public class constants {
     public static final String MESSAGEAREA_TOOLTIP_TEXT = "You can send private messages by writing \"@nickname Your message\" i.e. \"@John Hello John!\"";
 
     // Icons
-    public static final String OK_ICON_PATH = "../resources/icons/ok-30.png";
+    public static final String OK_ICON_PATH = "/chatclient/resources/icons/ok-30.png";
 }

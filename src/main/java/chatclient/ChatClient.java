@@ -26,9 +26,7 @@ public class ChatClient implements ChatClientDataProvider {
         super();
 
         chatClientUI = new ChatClientUI(this);
-        if (!Boolean.parseBoolean(System.getProperty("testMode"))) {
-            chatClientUI.openNickModal();
-        }
+        chatClientUI.openNickModal();
 
         tcpClientRunner();
 
@@ -38,7 +36,8 @@ public class ChatClient implements ChatClientDataProvider {
     }
 
     public static void main(String[] args) {
-        try (BufferedReader br = new BufferedReader(new FileReader("src\\main\\java\\chatclient\\config.txt"))) {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("src/main/java/chatclient/config.txt"));
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("server=")) {
@@ -55,6 +54,7 @@ public class ChatClient implements ChatClientDataProvider {
                     }
                 }
             }
+            br.close();
 
         } catch (Exception e) {
             e.printStackTrace();
