@@ -37,7 +37,7 @@ public class SettingsModal extends Modal {
         topBox.add(Box.createHorizontalGlue());
         topBox.add(settingsTitle);
         topBox.add(Box.createHorizontalGlue());
-        URL imgUrl = getClass().getResource("../resources/icons/close-30.png");
+        URL imgUrl = getClass().getResource("/icons/close-30.png");
         ImageIcon closeImageIcon = new ImageIcon(imgUrl);
         JLabel closeButton = new JLabel(closeImageIcon);
         closeButton.setPreferredSize(new Dimension(40, 40));
@@ -156,7 +156,7 @@ public class SettingsModal extends Modal {
 
         soundVolumeBox.add(soundVolumeSlider);
         soundVolumeBox.add(Box.createVerticalStrut(20));
-        URL muteImgUrl = getClass().getResource("../resources/icons/mute-30.png");
+        URL muteImgUrl = getClass().getResource("/icons/mute-30.png");
         ImageIcon muteImageIcon = new ImageIcon(muteImgUrl);
         JButton muteButton = new JButton(muteImageIcon);
         muteButton.setPreferredSize(new Dimension(40, 40));

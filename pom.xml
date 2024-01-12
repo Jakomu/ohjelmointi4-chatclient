@@ -103,7 +103,7 @@
     </pluginManagement>
     <resources>
         <resource>
-            <directory>src/main/java</directory>
+            <directory>src/main/java/chatclient/resources</directory>
         </resource>
      </resources>
   </build>

@@ -108,7 +108,7 @@ public class ChatClientUI extends JFrame {
         // Ikonit
         Box iconArea = Box.createHorizontalBox();
         iconArea.add(Box.createHorizontalStrut(5));
-        URL helpImgUrl = getClass().getResource("resources/icons/question-30.png");
+        URL helpImgUrl = getClass().getResource("/icons/question-30.png");
         ImageIcon helpImageIcon = new ImageIcon(helpImgUrl);
         JLabel helpIcon = new JLabel(helpImageIcon);
         helpIcon.addMouseListener(new MouseAdapter() {
@@ -119,7 +119,7 @@ public class ChatClientUI extends JFrame {
 
         iconArea.add(helpIcon);
         iconArea.add(Box.createHorizontalStrut(10));
-        URL settingsImgUrl = getClass().getResource("resources/icons/settings-30.png");
+        URL settingsImgUrl = getClass().getResource("/icons/settings-30.png");
         ImageIcon settingsImageIcon = new ImageIcon(settingsImgUrl);
         settingsIcon = new JLabel(settingsImageIcon);
         settingsIcon.addMouseListener(new MouseAdapter() {

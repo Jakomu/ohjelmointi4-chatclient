@@ -2,6 +2,7 @@ package chatclient;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -37,10 +38,9 @@ public class AudioPlayer {
 
     public void playNotification() {
         if (!mute) {
-            String audioFile = "src/main/java/chatclient/resources/audio/notification.wav";
-            AudioInputStream audioInputStream;
             try {
-                audioInputStream = AudioSystem.getAudioInputStream(new File(audioFile).getAbsoluteFile());
+                URL audioUrl = getClass().getResource("/audio/notification.wav");
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audioUrl);
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioInputStream);
                 FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);

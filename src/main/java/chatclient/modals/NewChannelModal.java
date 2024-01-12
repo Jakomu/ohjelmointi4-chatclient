@@ -36,7 +36,7 @@ public class NewChannelModal extends Modal {
         topBox.add(Box.createHorizontalGlue());
         topBox.add(titleLabel);
         topBox.add(Box.createHorizontalGlue());
-        URL imgUrl = getClass().getResource("../resources/icons/close-30.png");
+        URL imgUrl = getClass().getResource("/icons/close-30.png");
         ImageIcon closeImageIcon = new ImageIcon(imgUrl);
         JLabel closeButton = new JLabel(closeImageIcon);
         closeButton.setPreferredSize(new Dimension(40, 40));
